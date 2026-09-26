@@ -1,0 +1,16 @@
+.directions-label { margin-top: 19px; }
+
+textarea.directions {
+  display: block;
+  width: 100%;
+  min-height: 62px;
+  margin-top: 0;
+  resize: vertical;
+  border: 1px solid #d7e2ea;
+  line-height: 1.45;
+}
+
+textarea.directions:focus {
+  outline: 3px solid rgba(17, 164, 167, .2);
+  border-color: var(--aqua);
+}
