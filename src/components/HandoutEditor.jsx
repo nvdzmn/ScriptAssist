@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 
-const copyFor = (drug, language) => ({
+const copyFor = (drug, language, order) => ({
   title: language === 'English' ? `Starting ${drug.brandName}` : language === 'Español' ? `Cómo comenzar ${drug.brandName}` : `Bắt đầu dùng ${drug.brandName}`,
-  instructions: language === 'English' ? `1. Review your medication and supplies.\n2. Follow your care team’s schedule: ${drug.frequency}.\n3. Store the medication as directed and call your care team with questions.` : language === 'Español' ? `1. Revise su medicamento y suministros.\n2. Siga el horario de su equipo de atención: ${drug.frequency}.\n3. Guarde el medicamento según las instrucciones y llame a su equipo si tiene preguntas.` : `1. Kiểm tra thuốc và vật dụng của bạn.\n2. Làm theo lịch của nhóm chăm sóc: ${drug.frequency}.\n3. Bảo quản thuốc theo hướng dẫn và gọi nhóm chăm sóc nếu có câu hỏi.`,
+  instructions: language === 'English' ? `1. Review your medication and supplies.\n2. Follow your care team’s schedule: ${order.frequency}.\n3. Your current draft dose is ${order.dosage}. Store the medication as directed and call your care team with questions.` : language === 'Español' ? `1. Revise su medicamento y suministros.\n2. Siga el horario de su equipo de atención: ${order.frequency}.\n3. La dosis actual en borrador es ${order.dosage}. Guarde el medicamento según las instrucciones y llame a su equipo si tiene preguntas.` : `1. Kiểm tra thuốc và vật dụng của bạn.\n2. Làm theo lịch của nhóm chăm sóc: ${order.frequency}.\n3. Liều hiện tại trong bản nháp là ${order.dosage}. Bảo quản thuốc theo hướng dẫn và gọi nhóm chăm sóc nếu có câu hỏi.`,
   nurseLine: '24/7 Nurse Concierge: 1-800-555-0184'
 });
 
-export default function HandoutEditor({ drug, patient, language, onPrint }) {
-  const [handout, setHandout] = useState(() => copyFor(drug, language)); const [imageUrl, setImageUrl] = useState(null); const [imageState, setImageState] = useState('idle'); const [fda, setFda] = useState(null); const [fdaState, setFdaState] = useState('idle');
-  useEffect(() => { setHandout(copyFor(drug, language)); setImageUrl(null); setImageState('idle'); setFda(null); setFdaState('idle'); }, [drug.id, language]);
+export default function HandoutEditor({ drug, patient, language, order, onPrint }) {
+  const [handout, setHandout] = useState(() => copyFor(drug, language, order)); const [imageUrl, setImageUrl] = useState(null); const [imageState, setImageState] = useState('idle'); const [fda, setFda] = useState(null); const [fdaState, setFdaState] = useState('idle');
+  useEffect(() => { setHandout(copyFor(drug, language, order)); setImageUrl(null); setImageState('idle'); setFda(null); setFdaState('idle'); }, [drug.id, language, order.dosage, order.frequency]);
   const update = (field) => (event) => setHandout({ ...handout, [field]: event.target.value });
   const generateVisual = async () => { setImageState('loading'); try { const therapyType = drug.defaultDose.toLowerCase().includes('oral') ? 'oral medication' : 'injection pen'; const response = await fetch('/api/generate-instruction-image', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ therapyType }) }); const payload = await response.json(); if (!response.ok) throw new Error(payload.error); setImageUrl(payload.imageUrl); setImageState('ready'); } catch (error) { setImageState(error.message || 'Image generation failed.'); } };
   const loadFda = async () => { setFdaState('loading'); try { const response = await fetch(`/api/drug-label?brand=${encodeURIComponent(drug.brandName)}`); const payload = await response.json(); if (!response.ok) throw new Error(payload.error); setFda(payload); setFdaState('ready'); } catch (error) { setFdaState(error.message || 'FDA lookup failed.'); } };
