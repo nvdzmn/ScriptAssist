@@ -1,4 +1,7 @@
 :root {
+  --font-inter: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --violet-500: #6f4bd1;
   --violet-600: #5b39c2;
   --violet-100: #eee9fb;
@@ -860,7 +863,8 @@ h2 {
 }
 
 .rx-input input,
-.rx-input textarea {
+.rx-input textarea,
+.rx-input select {
   flex: 1;
   min-width: 0;
   padding: 0;
@@ -873,8 +877,24 @@ h2 {
 }
 
 .rx-input input:focus,
-.rx-input textarea:focus {
+.rx-input textarea:focus,
+.rx-input select:focus {
   outline: none;
+}
+
+.rx-input select {
+  appearance: none;
+  cursor: pointer;
+}
+
+.rx-inline-select select {
+  padding: 10px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font: inherit;
+  font-weight: 600;
 }
 
 .rx-code {
